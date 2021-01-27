@@ -57,6 +57,18 @@ def findMinimalHammingDistanceForDescriptor(descriptor, etalons):
         index += 1
     return index_of_min_distance
 
+def findMinimalCenterByHammingDistance(descriptor, etalons):
+    min_distance: float = 257
+    index = 0
+    index_of_minimal_center = 0
+    while index < 5:
+        current_distance = my_hamming_distance(descriptor, etalons[index])
+        if min_distance >= current_distance > 0.0:
+            index_of_minimal_center = index
+            min_distance = current_distance
+        index += 1
+    return index_of_minimal_center
+
 
 def calculate_amount_elements_at_cluster(input_array, start_index, finish_index):
     array = [0, 0, 0, 0, 0]
@@ -77,9 +89,9 @@ def round_array_of_centers(input_array):
     return rounded_array
 
 def main():
-    img_lester = cv2.imread("Images/Lester512.png")
-    img_liverpool = cv2.imread("Images/Liverpool.jpg")
-    img_liverpool_side = cv2.imread("Images/Liverpool_90_left.jpg")
+    img_lester = cv2.imread("Images/Leicter_more_white.jpg")
+    img_liverpool = cv2.imread("Images/Liverpool_more_white.jpg")
+    img_liverpool_side = cv2.imread("Images/Liverpool_more_white_rotate_30.jpg")
 
     orb = cv2.ORB_create(nfeatures=500)
 
@@ -148,6 +160,23 @@ def main():
 
     print()
     print(centers_of_clusters_rounded[0])
+#############################################################
+    start_time = time.time()
+    first_class: int = 0
+    second_class: int = 0
+    array_centers_for_each_descriptor = []
+    for i in range(0, 500):
+        index_from_etalon = \
+            findMinimalCenterByHammingDistance(descriptors_liverpool_side_bit_format[i], centers_of_clusters_rounded)
+        array_centers_for_each_descriptor.append(index_from_etalon)
+
+    print(array_centers_for_each_descriptor)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    # print(findMinimalCenterByHammingDistance(descriptors_liverpool_side_bit_format[6], centers_of_clusters_rounded))
+    #
+    # d = my_hamming_distance(descriptors_liverpool_side_bit_format[6], centers_of_clusters_rounded[4])
+    # print(f'distance: {d}')
 
 
 if __name__ == "__main__":
